@@ -135,10 +135,9 @@
         opacity: 1;
       }
     }
-    /* Ajustar el tamaño del código QR en la vista previa */
     #qr {
-      width: 200px; /* Ajusta el ancho */
-      height: 200px; /* Ajusta la altura */
+      width: 200px;
+      height: 200px;
     }
   </style>
 </head>
@@ -161,7 +160,7 @@
       <p><strong>Curso:</strong> <span id="cCurso"></span></p>
       <p><strong>Fecha:</strong> <span id="cFecha"></span></p>
       <p><strong>ID:</strong> <span id="cID"></span></p>
-      <p><strong>Hash :</strong> <span id="cHash"></span></p>
+      <p><strong>Hash:</strong> <span id="cHash"></span></p>
       <p><img id="qr" src="" alt="QR de verificación" /></p>
       <p id="nostrStatus">Publicando en Nostr...</p>
       <button id="descargarTXT">📄 Descargar TXT</button>
@@ -190,6 +189,11 @@
       document.getElementById('fecha').value = today;
     };
 
+    function generateQRCodeLink(id) {
+      const baseUrl = "https://l3v145431.github.io/verify.github.io";
+      return `https://static.wixstatic.com/media/a687f1_f7dbf3fb33774102b8b9eee82ef87a26~mv2.png`;
+    }
+
     document.getElementById('formulario').addEventListener('submit', async function(e) {
       e.preventDefault();
       const nombre = document.getElementById('nombre').value;
@@ -200,14 +204,18 @@
       const hashBuffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(texto));
       const hashArray = Array.from(new Uint8Array(hashBuffer));
       const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
       document.getElementById('cNombre').textContent = nombre;
       document.getElementById('cCurso').textContent = curso;
       document.getElementById('cFecha').textContent = fecha;
       document.getElementById('cID').textContent = id;
       document.getElementById('cHash').textContent = hashHex;
-      const qrUrl = `https://static.wixstatic.com/media/a687f1_054babd862ef4bca96854b866b7ede67~mv2.png`;
+
+      const qrUrl = generateQRCodeLink(id);
       document.getElementById('qr').src = qrUrl;
+
       document.getElementById('certificado').classList.remove('oculto');
+
       const nuevoCertificado = { nombre, curso, fecha, id, hash: hashHex };
       let certificados = JSON.parse(localStorage.getItem('certificados') || '[]');
       certificados.push(nuevoCertificado);
@@ -244,7 +252,6 @@
         format: 'A4'
       });
       const fondoURL = 'https://static.wixstatic.com/media/a687f1_6daa751a4aac4a418038ae37f20db004~mv2.jpg';
-
       const loadImage = (src) => {
         return new Promise((resolve, reject) => {
           const img = new Image();
@@ -254,13 +261,10 @@
           img.src = src;
         });
       };
-
       try {
         const fondo = await loadImage(fondoURL);
         const qrImage = await loadImage(qrUrl);
-
         doc.addImage(fondo, 'JPEG', 0, 0, 850, 595);
-
         doc.setFontSize(35);
         doc.text(`${curso}`, 200, 130);
         doc.setTextColor(255, 255, 255);
@@ -287,10 +291,7 @@
         doc.text(`ID: ${id}`, 40, 520);
         doc.setFontSize(12);
         doc.text(`Hash: ${hashHex}`, 40, 540);
-
-        // Ajustar el tamaño del código QR en el PDF
         doc.addImage(qrImage, 'PNG', 124, 460, 100, 100);
-
         doc.save(`certificado_${id}.pdf`);
       } catch (error) {
         alert("⚠️ Error al generar el PDF. Verifica las URLs de imágenes.");
@@ -320,7 +321,7 @@
             const hashBuffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(texto));
             const hashArray = Array.from(new Uint8Array(hashBuffer));
             const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-            const qrUrl = `https://static.wixstatic.com/media/a687f1_054babd862ef4bca96854b866b7ede67~mv2.png`;
+            const qrUrl = generateQRCodeLink(id);
             const pdfBlob = await generarPDFMasivo(nombre, curso, fecha, id, hashHex, qrUrl);
             zip.file(`certificado_${id}.pdf`, pdfBlob);
             certificados.push({ nombre, curso, fecha, id, hash: hashHex });
@@ -344,7 +345,6 @@
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'A4' });
       const fondoURL = 'https://static.wixstatic.com/media/a687f1_6daa751a4aac4a418038ae37f20db004~mv2.jpg';
-
       const loadImage = (src) => {
         return new Promise((resolve, reject) => {
           const img = new Image();
@@ -354,13 +354,10 @@
           img.src = src;
         });
       };
-
       try {
         const fondo = await loadImage(fondoURL);
         const qrImage = await loadImage(qrUrl);
-
         doc.addImage(fondo, 'JPEG', 0, 0, 850, 595);
-
         doc.setFontSize(35);
         doc.setTextColor(0, 0, 0);
         doc.text(`${curso}`, 425, 130, { align: 'center' });
@@ -379,10 +376,7 @@
         doc.text(`ID: ${id}`, 40, 520);
         doc.setFontSize(12);
         doc.text(`Hash: ${hashHex}`, 40, 540);
-
-        // Ajustar el tamaño del código QR en el PDF
         doc.addImage(qrImage, 'PNG', 124, 460, 100, 100);
-
         return doc.output("blob");
       } catch (error) {
         console.error("Error al generar PDF:", error);
