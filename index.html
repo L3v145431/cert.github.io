@@ -162,7 +162,7 @@
       <p><strong>ID:</strong> <span id="cID"></span></p>
       <p><strong>Hash:</strong> <span id="cHash"></span></p>
       <p><img id="qr" src="" alt="QR de verificación" /></p>
-      <p id="nostrStatus">Publicando en Nostr...</p>
+     
       <button id="descargarTXT">📄 Descargar TXT</button>
       <button id="descargarPDF">📄 Descargar PDF</button>
     </div>
@@ -286,11 +286,11 @@
         const text2 = "your skills evolve";
         const splitText2 = doc.splitTextToSize(text2, maxWidth);
         doc.text(splitText2, 340, 345);
-        doc.setFontSize(16);
-        doc.text(`Fecha: ${fecha}`, 40, 500);
-        doc.text(`ID: ${id}`, 40, 520);
-        doc.setFontSize(12);
-        doc.text(`Hash: ${hashHex}`, 40, 540);
+        doc.setFontSize(10);
+        doc.text(`Fecha: ${fecha}`, 128, 585);
+        doc.text(`ID: ${id}`, 4, 15);
+        doc.setFontSize(10);
+        doc.text(`Hash: ${hashHex}`, 263, 585);
         doc.addImage(qrImage, 'PNG', 124, 460, 100, 100);
         doc.save(`certificado_${id}.pdf`);
       } catch (error) {
@@ -371,11 +371,11 @@
         const text1 = "This achievement signifies your initial step toward mastering the art of Sprinting. Continue to enhance your expertise by consistently applying the Sprint methodology to tackle real-world challenges and watch";
         doc.text(doc.splitTextToSize(text1, 650), 100, 310);
         doc.text("your skills evolve", 340, 345);
-        doc.setFontSize(16);
-        doc.text(`Fecha: ${fecha}`, 40, 500);
-        doc.text(`ID: ${id}`, 40, 520);
-        doc.setFontSize(12);
-        doc.text(`Hash: ${hashHex}`, 40, 540);
+        doc.setFontSize(10);
+        doc.text(`Fecha: ${fecha}`, 128, 585);
+        doc.text(`ID: ${id}`, 4, 15);
+        doc.setFontSize(10);
+        doc.text(`Hash: ${hashHex}`, 263, 585);
         doc.addImage(qrImage, 'PNG', 124, 460, 100, 100);
         return doc.output("blob");
       } catch (error) {
