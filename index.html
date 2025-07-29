@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Subir Certificados</title>
+  <title>Generar Certificados</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -66,7 +66,6 @@
       try {
         const fondo = await loadImage(fondoURL);
         const qrImage = await loadImage(qrUrl);
-
         doc.addImage(fondo, 'JPEG', 0, 0, 850, 595);
         doc.setFontSize(35);
         doc.setTextColor(0, 0, 0);
@@ -76,22 +75,17 @@
         doc.setTextColor(0, 0, 0);
         doc.setFont('Helvetica', 'normal');
         doc.setFontSize(14);
-
         const text = "weSpark hereby certifies that you have successfully completed our Design Sprint Masterclass, demonstrating your ability to lead teams to create and test new product concepts in only 4 days.";
         doc.text(doc.splitTextToSize(text, 600), 120, 250);
-
         const text1 = "This achievement signifies your initial step toward mastering the art of Sprinting. Continue to enhance your expertise by consistently applying the Sprint methodology to tackle real-world challenges and watch";
         doc.text(doc.splitTextToSize(text1, 650), 100, 310);
         doc.text("your skills evolve", 340, 345);
-
         doc.setFontSize(10);
         doc.text(`Fecha: ${fecha}`, 128, 585);
         doc.text(`ID: ${id}`, 4, 15);
         doc.setFontSize(10);
         doc.text(`Hash: ${hashHex}`, 263, 585);
-
         doc.addImage(qrImage, 'PNG', 124, 460, 100, 100);
-
         doc.save(`certificado_${id}.pdf`);
       } catch (error) {
         console.error("Error al generar PDF:", error);
@@ -115,10 +109,7 @@
       try {
         await addDoc(collection(db, "certificados"), data);
         alert("✅ Certificado subido con éxito\nID: " + id + "\nHash: " + hash);
-
-        // Generar y descargar el PDF
         await generarPDFIndividual(nombre, curso, fecha, id, hash);
-
         document.getElementById("formSubir").reset();
       } catch (err) {
         console.error(err);
@@ -141,7 +132,6 @@
         skipEmptyLines: true,
         complete: async function(results) {
           const today = new Date().toISOString().split('T')[0];
-
           for (const row of results.data) {
             const nombre = row.nombre;
             const curso = row.curso;
@@ -152,10 +142,8 @@
             const hashArray = Array.from(new Uint8Array(hashBuffer));
             const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
             const qrUrl = generateQRCodeLink(id);
-
             const pdfBlob = await generarPDFMasivo(nombre, curso, fecha, id, hashHex, qrUrl);
             zip.file(`certificado_${id}.pdf`, pdfBlob);
-
             const nuevoCertificado = { id, nombre, curso, fecha, hash: hashHex };
             certificados.push(nuevoCertificado);
 
@@ -165,7 +153,6 @@
             } catch (err) {
               console.error("Error al subir certificado:", err);
             }
-
             await new Promise(resolve => setTimeout(resolve, 500));
           }
 
@@ -202,7 +189,6 @@
       try {
         const fondo = await loadImage(fondoURL);
         const qrImage = await loadImage(qrUrl);
-
         doc.addImage(fondo, 'JPEG', 0, 0, 850, 595);
         doc.setFontSize(35);
         doc.setTextColor(0, 0, 0);
@@ -212,22 +198,17 @@
         doc.setTextColor(0, 0, 0);
         doc.setFont('Helvetica', 'normal');
         doc.setFontSize(14);
-
         const text = "weSpark hereby certifies that you have successfully completed our Design Sprint Masterclass, demonstrating your ability to lead teams to create and test new product concepts in only 4 days.";
         doc.text(doc.splitTextToSize(text, 600), 120, 250);
-
         const text1 = "This achievement signifies your initial step toward mastering the art of Sprinting. Continue to enhance your expertise by consistently applying the Sprint methodology to tackle real-world challenges and watch";
         doc.text(doc.splitTextToSize(text1, 650), 100, 310);
         doc.text("your skills evolve", 340, 345);
-
         doc.setFontSize(10);
         doc.text(`Fecha: ${fecha}`, 128, 585);
         doc.text(`ID: ${id}`, 4, 15);
         doc.setFontSize(10);
         doc.text(`Hash: ${hashHex}`, 263, 585);
-
         doc.addImage(qrImage, 'PNG', 124, 460, 100, 100);
-
         return doc.output("blob");
       } catch (error) {
         console.error("Error al generar PDF:", error);
@@ -237,85 +218,103 @@
 
     window.procesarCSV = procesarCSV;
   </script>
-  <style>
+ <style>
     body {
-      background: #121212;
-      color: white;
+      background: #ffffff;
+      color: #000000;
       font-family: Arial, sans-serif;
       padding: 40px;
       display: flex;
       flex-direction: column;
       align-items: center;
     }
+
     .tabs {
       display: flex;
       width: 100%;
       max-width: 600px;
       margin-bottom: 20px;
     }
+
     .tab {
       flex: 1;
       text-align: center;
       padding: 10px;
-      background-color: #1e1e1e;
-      border: 1px solid #bb86fc;
+      background-color: #E2E2E2;
+      border: 1px solid #eceae4;
       cursor: pointer;
     }
+
     .tab.active {
-      background-color: #bb86fc;
-      color: #121212;
+      background-color: #FFBC00;
+      color: #000000;
     }
+
     .tab-content {
       display: none;
       width: 100%;
       max-width: 600px;
     }
+
     .tab-content.active {
       display: block;
     }
+
+    .form-container {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+    }
+
     form {
-      background: #1e1e1e;
+      background: #E2E2E2;
       padding: 20px;
       border-radius: 10px;
       width: 100%;
       max-width: 400px;
     }
+
     input, button {
-      width: 100%;
+      width: 95%;
       margin: 10px 0;
       padding: 10px;
       border-radius: 5px;
     }
+
     input {
-      border: 1px solid #bb86fc;
-      background: #2d2d2d;
-      color: white;
+      border: 1px solid #ccc9c3;
+      background: #FFFFFF;
+      color: #000000;
     }
+
     button {
-      background: #bb86fc;
-      color: #121212;
+      background: #FFBC00;
+      color: #000000;
       font-weight: bold;
       border: none;
       cursor: pointer;
     }
+
     button:hover {
-      background: #9a67ea;
+      background: #FCD307;
     }
   </style>
 </head>
 <body>
-  <h1>Subir Certificado</h1>
+  <h1>Generar Certificado</h1>
   <div class="tabs">
     <div class="tab active" data-tab="individual">Individual</div>
     <div class="tab" data-tab="masivo">Masivo</div>
   </div>
   <div id="individual" class="tab-content active">
+    <div class="form-container">
     <form id="formSubir">
       <input type="text" id="nombre" placeholder="Nombre completo" required />
       <input type="text" id="curso" placeholder="Curso" required />
       <input type="date" id="fecha" required />
-      <button type="submit">Subir</button>
+      <button type="submit">Generar</button>
     </form>
+  </div>
   </div>
   <div id="masivo" class="tab-content">
     <h2>Carga masiva desde CSV</h2>
